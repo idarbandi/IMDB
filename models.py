@@ -4,7 +4,7 @@ from peewee import SqliteDatabase, ForeignKeyField, \
 
 from khayyam.jalali_datetime import JalaliDatetime
 
-db = SqliteDatabase("Posts.db")
+db = SqliteDatabase("imdb.db")
 
 
 class BaseModel(Model):
@@ -21,10 +21,10 @@ class Genre(BaseModel):
 class Movie(BaseModel):
     url = CharField(null=True)
     title = CharField(null=True)
-    rate = FloatField(default=1.0)
+    rate = FloatField(null=True, default=2.2)
     awards = CharField(null=True)
     year = IntegerField(null=True)
-    platform = CharField(default='Movie')
+    platform = CharField(null=True)
     summary = TextField(null=True)
     is_completed = BooleanField(default=False)
 

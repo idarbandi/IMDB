@@ -1,12 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-
 from personal_config import UserName, Password
 from time import sleep
-from config import *
 from models import Movie, Genre
 from queue import Queue
+from config import *
 
 q = Queue()
 
@@ -21,18 +20,79 @@ class PureLink:
         return cls.instance
 
     def __init__(self):
-        self.con = webdriver.Chrome()
+        self.driver = webdriver.Chrome()
+        if protocols['link_crawler']:
+            self.LinkCrawler()
+        if protocols['data_crawler']:
+            self.Getdata()
+            while True:
+                continue
+            self.driver.close()
 
-    def get(self):
-        driver = self.con
-        if protocols['LinkCrawler']:
-            driver.get(
-                'https://www.imdb.com/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.imdb.com'
-                '%2Fregistration%2Fap-signin-handler%2Fimdb_us&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0'
-                '%2Fidentifier_select&openid.assoc_handle=imdb_us&openid.mode=checkid_setup&siteState'
-                '=eyJvcGVuaWQuYXNzb2NfaGFuZGxlIjoiaW1kYl91cyIsInJlZGlyZWN0VG8iOiJodHRwczovL3d3dy5pbWRiLmNvbS8_cmVmXz1s'
-                'b2dpbiJ9&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http'
-                '%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0&tag=imdbtag_reg-20')
+
+    @property
+    def title(self):
+        try:
+            title_tag = self.driver.find_element(By.XPATH, title_xpth).text
+            return title_tag
+        except:
+            return None
+
+    @property
+    def rate(self):
+        try:
+            rate_tag = self.driver.find_element(By.XPATH, rate_xpth).text
+            return rate_tag
+        except:
+            return None
+
+    @property
+    def awards(self):
+        try:
+            awards_tag = self.driver.find_element(By.XPATH, awards_xpth).text
+            return awards_tag
+        except:
+            return None
+
+    @property
+    def year(self):
+        try:
+            year_tag = self.driver.find_element(By.XPATH, year_xpth1).text
+            if len(year_tag) < 5:
+                return year_tag
+        except:
+            year_tag = self.driver.find_element(By.XPATH, year_xpth2).text
+            return year_tag
+    @property
+    def platform(self):
+        platform_tag = self.driver.find_element(By.XPATH, platform_xpth).text
+        if len(platform_tag) > 4:
+            return platform_tag
+        else:
+            return 'Cinema'
+
+
+
+    @property
+    def summary(self):
+        try:
+            body_tag = self.driver.find_element(By.XPATH, body_xpth).text
+            return body_tag
+        except:
+            return None
+
+    @property
+    def genre(self):
+        try:
+            genre_tag = self.driver.find_element(By.CLASS_NAME, genre_Cls).text
+            return genre_tag
+        except:
+            return None
+
+    def LinkCrawler(self):
+        driver = self.driver
+        if protocols['connection_type'] == 'dynamic':
+            driver.get(Base_link)
             sleep(3)
             user = driver.find_element(By.XPATH, '//*[@id="ap_email"]')
             user.clear()
@@ -52,27 +112,31 @@ class PureLink:
             driver.implicitly_wait(50)
             protocols['LinkCrawler'] = False
             driver.close()
-        if protocols['DataCrawler']:
-            file = open('storage/links.json', 'r')
-            for lnk in file:
-                q.put(lnk)
-            while True:
-                URL = q.get()
-                driver.get(URL)
-                driver.implicitly_wait(50)
-                genre = Genre.create(name=driver.find_element(By.CLASS_NAME, genre_Cls).text)
-                movie = Movie.create(url=URL,
-                              title=driver.find_element(By.XPATH, title_xpth).text,
-                              rate=driver.find_element(By.XPATH, rate_xpth).text,
-                              awards=driver.find_element(By.XPATH, awards_xpth).text,
-                              year=driver.find_element(By.XPATH, year1_xpth).text,
-                              platform=driver.find_element(By.XPATH, platform_xpth).text,
-                              summary=driver.find_element(By.XPATH, body_xpth).text,
-                              genre=genre)
-                q.task_done()
-                print(movie)
-        q.join()
-        driver.close()
+
+    def Getdata(self):
+        driver = self.driver
+        file = open('storage/links.json', 'r')
+        for lnk in file:
+            q.put(lnk)
+        while True:
+            URL = q.get()
+            driver.get(URL)
+            genre = Genre.create(name=self.genre)
+            movie = Movie.create(url=URL,
+                                 title=self.title,
+                                 rate=self.rate,
+                                 awards=self.awards,
+                                 year=self.year,
+                                 platform=self.platform,
+                                 summary=self.summary,
+                                 genre=genre.name,
+                                 is_completed=True)
+            print(f'{movie} is extracted out of imdb')
+            q.task_done()
+            if q.empty():
+                driver.close()
+    q.join()
+
 
     def save(self, data):
         with open('storage/links.json', 'a') as file:
