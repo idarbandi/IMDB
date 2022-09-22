@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+from demo_pkg.db import create_table
 from personal_config import UserName, Password
 from time import sleep
 from models import Movie, Genre
@@ -12,6 +13,9 @@ q = Queue()
 
 class PureLink:
     instance = None
+
+    """ this is a singleton class that provides a Chromedriver 
+window which you can crawl into data or links to extract information """
 
     @classmethod
     def __new__(cls, *args, **kwargs):
@@ -90,6 +94,10 @@ class PureLink:
             return None
 
     def LinkCrawler(self):
+
+        """ link crawler can be initiated either by signing in or static way and extracts the
+        top movie links from (www.imdb.com) and saves them into a file """
+
         driver = self.driver
         if protocols['connection_type'] == 'dynamic':
             driver.get(Base_link)
@@ -114,7 +122,13 @@ class PureLink:
             driver.close()
 
     def Getdata(self):
+
+        """ get data extracts the information from
+        every links given and saves them into SQLite
+        database file that we created"""
+
         driver = self.driver
+        c = create_table()
         file = open('storage/links.json', 'r')
         for lnk in file:
             q.put(lnk)
@@ -135,10 +149,14 @@ class PureLink:
             q.task_done()
             if q.empty():
                 driver.close()
+                break
     q.join()
 
 
     def save(self, data):
+
+        """ saves the given links into the file when is called"""
+
         with open('storage/links.json', 'a') as file:
             file.writelines(f'{data}\n')
             file.close()

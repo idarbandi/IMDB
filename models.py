@@ -17,6 +17,7 @@ class BaseModel(Model):
 class Genre(BaseModel):
     name = CharField()
 
+""" Database Models"""
 
 class Movie(BaseModel):
     url = CharField(null=True)

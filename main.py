@@ -1,8 +1,9 @@
-from threading import Thread
+from multiprocessing import Process
 from imdb import PureLink
-from demo_pkg.db import create_table
 
 if __name__ == "__main__":
-    c = create_table()
-    p = Thread(target=PureLink)
+
+    """ defined a Multi_Processing function to Perform The task"""
+
+    p = Process(target=PureLink)
     p.start()

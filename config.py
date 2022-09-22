@@ -4,6 +4,8 @@ protocols = {
     'link_crawler': False
 }
 
+""" Protocols and Xpath of The HTML/CSS elements to find By slenium"""
+
 title_xpth = '//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/h1'
 platform_xpth = '//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[2]/div[1]/div/ul/li[1]'
 rate_xpth = '//*[@id="__next"]/main/div/section[1]/section/div[3]/section/section/div[2]/div[2]/div/div[1]/a/div/div/' \
