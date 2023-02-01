@@ -1,3 +1,16 @@
+
+<img src="https://img.icons8.com/color/48/000000/imdb.png"/>
+
+<pre> This python script requests to the IMDB site and first gets the links of the recomended movie and tv series then extracts the links
+                                                and saves them into SQlite file
+                                              its also singleton and MultiProcess </pre>
+                                              
+                                              <video src="/vid/crawler1.webm" controls loop width="100%" height="50%"></video>
+                                              <video src="/vid/crawler2.webm" controls loop width="100%" height="50%"></video>
+
+
+
+
 <h1 align="center">Hi 👋, I'm amir darbandi</h1>
 <h3 align="center">A passionate and precise web programmer from iran</h3>
 
@@ -32,16 +45,3 @@
 <p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=idarbandi&show_icons=true&locale=en&layout=compact" alt="idarbandi" /></p>
 
 <p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=idarbandi&show_icons=true&locale=en" alt="idarbandi" /></p>
-
-
-
-
-
-<img src="https://img.icons8.com/color/48/000000/imdb.png"/>
-
-<pre> This python script requests to the IMDB site and first gets the links of the recomended movie and tv series then extracts the links
-                                                and saves them into SQlite file
-                                              its also singleton and MultiProcess </pre>
-                                              
-                                              <video src="/vid/crawler1.webm" controls loop width="100%" height="50%"></video>
-                                              <video src="/vid/crawler2.webm" controls loop width="100%" height="50%"></video>
